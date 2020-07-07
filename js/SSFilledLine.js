@@ -8,15 +8,18 @@ class SSFilledLine {
             'N', 'N', 'N', 'Y'
         ];
         this.arrSlabs = [];
+        this.topY = undefined;
+        this.bottomY = undefined;
     }
 
-    setSlab(slab) {
+    // add slab to the horizontal line 
+    addSlab(slab) {
         if (this.arrSlabs.length === 0) {
             this.arrSlabs.push(slab);
             this.topY = slab.yPosition;
             this.bottomY = slab.yPosition + slab.height;
-        } else if (this.topY) {
-
+        } else { // if (this.topY) 
+            this.arrSlabs.push(slab);
         }
         // const idx = positionY % 25;
         this.arrSlabPositions[slab.yPosition / 25] = 'Y';
@@ -37,9 +40,29 @@ class SSFilledLine {
         }
     }
 
-    drawSlabsLine(context) {
-        this.context = context;
+    isSlotFull(xPos) {
+        let retVal = false;
+        this.arrSlabs.forEach((ele) => {
+            if (ele.xPosition === xPos) {
+                retVal = true;
+            }
+        });
+        console.log(" isslotFull():  " + retVal);
+        return retVal;
+    }
 
+    drawHorizontalLine(context) {
+        // console.log(" drawHorizontalLine() called ");
+        this.context = context;
+        this.arrSlabs.forEach((eachSlab) => {
+            // eachSlab.drawSlab(eachSlab.xPosition);
+            eachSlab.drawSlab();
+        });
     }
 
 }
+
+
+// if(ele.xPosition === xPos){
+// retVal = retVal && ();
+// }

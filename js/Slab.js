@@ -16,7 +16,9 @@ class Slab {
     }
 
     drawSlab(xPos) {
-        this.xPosition = xPos;
+        // xPos = xPos || -1;
+        this.xPosition = xPos || this.xPosition;
+
         // this.yPosition = 0;
         // this.gameCtx.fillStyle = "red";
         // let gradient = this.gameCtx.createLinearGradient(this.xPosition, this.yPosition, this.width, this.height);
@@ -31,29 +33,42 @@ class Slab {
             this.gameCtx.fillStyle = pattern;
             this.gameCtx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
         };
-        console.log(`x:  ${this.xPosition}   y: ${this.yPosition} `);
+        // console.log(` inside drawSlab() --- x:  ${this.xPosition}   y: ${this.yPosition} `);
     }
 
     clearSlab() {
-        console.log(" clearSlab()  : " + this.xPosition + "  " + this.yPosition);
-        this.gameCtx.clearRect(this.xPosition, this.yPosition, this.width, this.height);
+        if (this.game.isSlabFalling) {
+            // console.log(" clearSlab()  : " + this.xPosition + "  " + this.yPosition);
+            this.gameCtx.clearRect(this.xPosition, this.yPosition, this.width, this.height);
+        }
     }
 
     draw(xPos) {
-        this.clearSlab();
+        // this.clearSlab();
         this.game.isSlabFalling = true;
         this.xPosition = xPos;
-        this.drawSlab(this.xPosition);
+        // this.drawSlab(this.xPosition);
         this.movetimer = setInterval(() => {
-            console.log(" set time out ");
-            this.drawSlab(this.xPosition);
-            this.clearSlab();
-            // if (this.checkCanvasCollision()) {
-            if (this.checkCanvasCollision() || this.checkLineCollision()) {
-                this.stopSlab();
+            // console.log(" set time out ");
+            if (this.game.isSlabFalling) {
+                this.drawSlab(this.xPosition);
+                this.clearSlab();
             }
-            this.yPosition += 25;
-        }, 1000 / 2);
+            // console.log(" CHECK CHECK LINE LINE ");
+            // if (this.game.isLineCollision(this) === true) {
+            if (this.checkLineCollision()) {
+                console.log(" stopSlab() checkLineCollision() - from slab.js check");
+                this.game.isCanvasTouched = false;
+                this.stopSlab();
+            } else if (this.checkCanvasCollision()) {
+                console.log(" stopSlab() checkCanvasCollision() - from slab.js check");
+                this.game.isCanvasTouched = true;
+                this.stopSlab();
+            } else {
+                this.yPosition += 25;
+            }
+
+        }, 1000 / 4);
 
         // window.requestAnimationFrame(this.draw(xPos));
         // this.yPosition += 30;
@@ -66,24 +81,27 @@ class Slab {
 
     stopSlab() {
         clearInterval(this.movetimer);
-        this.game.isSlabFalling = false;
-        this.game.addSlabToLine(this);
-        console.log("collision with canvas border found. ");
+        this.game.addSlabToLines(this);
+        // console.log("stopSlab(),  slab collided  ");
     }
 
     checkCanvasCollision() {
         // if ((this.yPosition + this.height) >= this.canvasHeight) {
         if (this.canvasHeight - (this.yPosition) <= this.height) {
+            // console.log(" slab collided with canvas");
+            this.game.isSlabFalling = false;
             return true;
             // clearTimeout(this.movetimer);
             // this.drawSlab(this.xPosition);
-            console.log(" touched canvas bottom");
         }
         return false;
     }
 
     checkLineCollision() {
-        return this.game.isLineCollision(this);
+        if (this.game.isLineCollision(this))
+            return true;
+        else
+            return false;
     }
 
     moveSlab() {
@@ -106,7 +124,7 @@ class Slab {
                         }
                         break;
                 }
-                console.log(" moveslab() -- " + event.keyCode);
+                // console.log(" moveslab() -- " + event.keyCode);
                 this.drawSlab(this.xPosition);
 
             }
