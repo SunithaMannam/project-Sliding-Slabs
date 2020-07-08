@@ -76,19 +76,16 @@ class Slab {
         this.xPosition = xPos;
         // this.drawSlab(this.xPosition);
         this.movetimer = setInterval(() => {
-            // console.log(" set time out ");
             if (this.game.isSlabFalling) {
                 this.drawSlab(this.xPosition);
                 this.clearSlab();
             }
-            // console.log(" CHECK CHECK LINE LINE ");
+
             // if (this.game.isLineCollision(this) === true) {
             if (this.checkLineCollision()) {
-                // console.log(" stopSlab() checkLineCollision() - from slab.js check");
                 this.game.isCanvasTouched = false;
                 this.stopSlab();
             } else if (this.checkCanvasCollision()) {
-                // console.log(" stopSlab() checkCanvasCollision() - from slab.js check");
                 this.game.isCanvasTouched = true;
                 this.stopSlab();
             } else {
@@ -105,7 +102,9 @@ class Slab {
      */
     stopSlab() {
         clearInterval(this.movetimer);
-        this.game.addSlabToLines(this);
+        if (typeof this.game != 'undefined') {
+            this.game.addSlabToLines(this);
+        }
         // console.log("stopSlab(),  slab collided  ");
     }
 

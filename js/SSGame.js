@@ -15,6 +15,7 @@ class SSGame {
         this.y = undefined;
         this.isSlabFalling = undefined;
         this.randXPos = undefined;
+        this.gameTimer = undefined;
     }
 
     /**
@@ -30,6 +31,7 @@ class SSGame {
         this.isSlabFalling = false;
         this.isCanvasTouched = true;
         this.arrAllLines = [];
+        this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.start();
     }
 
@@ -44,7 +46,7 @@ class SSGame {
          *   2. Trigger a new fallling slab,if previous slab hit the bottom &&  Add check the collision of slab and add the slab to horizontal lines 
          *   3. Check for lines full and remove the fully formed lines
          * */
-        setInterval(() => {
+        this.gameTimer = setInterval(() => {
             // 1. Draw all the lines on canvas
             if (this.arrAllLines.length > 0) {
                 this.arrAllLines.forEach((eachLine) => {
@@ -99,9 +101,9 @@ class SSGame {
             // console.log(" addSlabToLines : case 3 ");
             // slab hit a line that is not the top
             let line = this.getHorizontalLine(slab);
-            // if (line != null) {
-            line.addSlab(slab);
-            // }
+            if (typeof line != 'undefined') {
+                line.addSlab(slab);
+            }
         }
         // console.log(" AAA: " + this.arrAllLines.slice[arrLen - 1].topY);
     }
@@ -190,5 +192,11 @@ class SSGame {
         }
     }
 
-
+    /**
+     *  to stop the game
+     */
+    stopGame() {
+        this.simpleSlab.stopSlab();
+        clearInterval(this.gameTimer);
+    }
 }
