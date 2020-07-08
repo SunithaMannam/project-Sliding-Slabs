@@ -1,5 +1,10 @@
+/**
+ *  Class that represents each slab (the moving blocks if the game)
+ */
 class Slab {
-
+    /**
+     *  Slab constructor
+     */
     constructor() {
         this.xPosition = 0;
         this.yPosition = 0;
@@ -8,6 +13,10 @@ class Slab {
         this.movetimer = undefined;
     }
 
+    /**
+     *  Sets the game object to the Slab
+     * @param {*} game 
+     */
     setGame(game) {
         this.game = game;
         this.gameCtx = game.gameCtx;
@@ -15,6 +24,11 @@ class Slab {
         this.canvasWidth = game.width;
     }
 
+    /**
+     * Draw the slab on the canvas i.e 
+     * the falling slab or the slab that reached bottom
+     * @param {*} xPos 
+     */
     drawSlab(xPos) {
         // xPos = xPos || -1;
         this.xPosition = xPos || this.xPosition;
@@ -32,10 +46,17 @@ class Slab {
             let pattern = this.gameCtx.createPattern(img, 'repeat');
             this.gameCtx.fillStyle = pattern;
             this.gameCtx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
+            this.gameCtx.strokeStyle = "#0000ff";
+            // this.gameCtx.shadowBlur = 20;
+            // this.gameCtx.lineWidth = 2;
+            // this.gameCtx.strokeRect(this.xPosition, this.yPosition, this.width, this.height);
         };
         // console.log(` inside drawSlab() --- x:  ${this.xPosition}   y: ${this.yPosition} `);
     }
 
+    /**
+     *  clears the slab from the canvas used to create moving effect
+     */
     clearSlab() {
         if (this.game.isSlabFalling) {
             // console.log(" clearSlab()  : " + this.xPosition + "  " + this.yPosition);
@@ -43,6 +64,12 @@ class Slab {
         }
     }
 
+    /**
+     *  to draw Slab on the canvas continuously.
+     *  Timer is  started that repeats the drawing task
+     *  This also checks the collision of alsb with bottom of canvas or with any other slabs
+     * @param {*} xPos 
+     */
     draw(xPos) {
         // this.clearSlab();
         this.game.isSlabFalling = true;
@@ -57,11 +84,11 @@ class Slab {
             // console.log(" CHECK CHECK LINE LINE ");
             // if (this.game.isLineCollision(this) === true) {
             if (this.checkLineCollision()) {
-                console.log(" stopSlab() checkLineCollision() - from slab.js check");
+                // console.log(" stopSlab() checkLineCollision() - from slab.js check");
                 this.game.isCanvasTouched = false;
                 this.stopSlab();
             } else if (this.checkCanvasCollision()) {
-                console.log(" stopSlab() checkCanvasCollision() - from slab.js check");
+                // console.log(" stopSlab() checkCanvasCollision() - from slab.js check");
                 this.game.isCanvasTouched = true;
                 this.stopSlab();
             } else {
@@ -70,21 +97,21 @@ class Slab {
 
         }, 1000 / 4);
 
-        // window.requestAnimationFrame(this.draw(xPos));
-        // this.yPosition += 30;
-        // setInterval(() => {
-        //     // this.clearSlab();
-        //     this.draw(xPos);
-        //     this.yPosition += 30;
-        // }, 1000);
     }
 
+    /**
+     *  stops the timer that trigger the salb falling
+     *  used to stop the slab drawing task, once the salb reaches the bottom of screen
+     */
     stopSlab() {
         clearInterval(this.movetimer);
         this.game.addSlabToLines(this);
         // console.log("stopSlab(),  slab collided  ");
     }
 
+    /**
+     * cheks whether the slab collided with bottom of screen
+     */
     checkCanvasCollision() {
         // if ((this.yPosition + this.height) >= this.canvasHeight) {
         if (this.canvasHeight - (this.yPosition) <= this.height) {
@@ -97,6 +124,9 @@ class Slab {
         return false;
     }
 
+    /**
+     * chesks whether the slab reaches the bottom, but touches any other slabs
+     */
     checkLineCollision() {
         if (this.game.isLineCollision(this))
             return true;
@@ -104,12 +134,15 @@ class Slab {
             return false;
     }
 
+    /**
+     * For slab moving roght or left
+     */
     moveSlab() {
         document.onkeydown = (event) => {
             const key = event.keyCode;
             /*  37 : arrow left ;  39 : arrow right ;   */
             const possibleKeyStrokes = [37, 39];
-            if (possibleKeyStrokes.includes(key)) {
+            if (possibleKeyStrokes.includes(key) && this.game.isSlabFalling) {
                 this.clearSlab();
                 switch (key) {
                     case 37: // arrow left 

@@ -1,4 +1,8 @@
 window.onload = function () {
+
+    /**
+     *  action when 'Start Game' is clicked 
+     * */
     const btn = document.querySelector(".btn-game");
     btn.onclick = function () {
         if (btn.classList.contains("start")) {
@@ -8,6 +12,9 @@ window.onload = function () {
         }
     }
 
+    /**
+     *  function to start the game and game canvas
+     *  */
     function start() {
         btn.classList.remove('start');
         btn.classList.add('stop');
@@ -19,10 +26,12 @@ window.onload = function () {
         console.log("start button clicked " + screen.getAttribute("display"));
     }
 
+    /**
+     *  function to stop the game and game canvas
+     *  */
     function stop() {
         console.log(" stop button clicked ");
     }
-
 
 
 };
