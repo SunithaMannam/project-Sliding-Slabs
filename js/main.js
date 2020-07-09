@@ -38,13 +38,23 @@ window.onload = function () {
         btn.innerText = 'START GAME';
         // window.location.reload();
         game.stopGame();
-        game.gameCtx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+        // game.gameCtx.clearRect(0, 0, game.canvas.width, game.canvas.height);
         let img = new Image();
         img.src = 'images/gameover_1.jpg';
         img.onload = () => {
+            game.gameCtx.clearRect(0, 0, game.canvas.width, game.canvas.height);
             game.gameCtx.drawImage(img, 0, 0, game.canvas.width, game.canvas.height);
         };
     }
 
 
 };
+
+/**
+ * 
+ * 
+ *  1. screen  flickering
+    2. the block before the collisonis detected it is moving and joining the next block 
+    3. the block is not drawn from line 0. 
+
+ */

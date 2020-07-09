@@ -61,7 +61,10 @@ class SSGame {
                 this.startNewSlab();
                 this.simpleSlab.moveSlab();
             }
-        }, 1000 / 4);
+            if (this.checkTopCollision()) {
+                // console.log(`collised with top game over !! ${this.arrAllLines.length} `);
+            }
+        }, 1000 / 1);
         // console.log(" inside SSGame-> start()"); // + this.simpleSlab.xPosition + " " + this.simpleSlab.yPosition);
     }
 
@@ -82,7 +85,8 @@ class SSGame {
      *  Adds the collide slab to the array of horizontal lines
      *  */
     addSlabToLines(slab) {
-        console.log("addSlabToLines() -> this.arrAllLines.length :   " + this.arrAllLines.length);
+        // console.log("addSlabToLines() -> this.arrAllLines.length :   " + this.arrAllLines.length);
+        // console.log(` addSlabToKines: ${slab.xPosition}, ${slab.yPosition}`);
         // case 1: there are no lines 
         const arrLen = this.arrAllLines.length;
         if (arrLen === 0) {
@@ -102,10 +106,14 @@ class SSGame {
             // slab hit a line that is not the top
             let line = this.getHorizontalLine(slab);
             if (typeof line != 'undefined') {
-                line.addSlab(slab);
+                // console.log(" addSlabToLines : case 3 -> line found ");
+                if (line.topY === slab.yPosition) {
+                    // console.log(" addSlabToLines : case 3 -> line found -> y position matches");
+                    line.addSlab(slab);
+                }
             }
         }
-        // console.log(" AAA: " + this.arrAllLines.slice[arrLen - 1].topY);
+        // console.log(" AAA: " + this.arrAllLines.length);
     }
 
 
@@ -117,13 +125,16 @@ class SSGame {
         let retElement;
         if (this.arrAllLines.length > 0) {
             this.arrAllLines.forEach((element) => {
+                if (element.topY === slab.yPosition) {
+                    retElement = element;
+                }
                 // console.log("getHorizontalLine() --  " + element.topY + " slab-Y: " + slab.yPosition + "touch type: " + this.isCanvasTouched);
-                if (!this.isCanvasTouched && element.topY === slab.yPosition + slab.height) {
-                    retElement = element;
-                }
-                if (this.isCanvasTouched && element.topY === slab.yPosition) {
-                    retElement = element;
-                }
+                // if (!this.isCanvasTouched && element.topY === slab.yPosition + slab.height) {
+                //     retElement = element;
+                // }
+                // if (this.isCanvasTouched && element.topY === slab.yPosition) {
+                //     retElement = element;
+                // }
             });
         }
         return retElement;
@@ -153,6 +164,55 @@ class SSGame {
     }
 
     /**
+     * returns true, if left position of the slab is full => there is a left collision
+     * @param {*} slab 
+     */
+    isLeftSideCollision(slab) {
+        let isLeftCollide = false;
+
+        if (this.isSlabFalling) {
+            if (this.arrAllLines.length <= 0) {
+                return false;
+            } else {
+                this.arrAllLines.forEach((eachline) => {
+                    eachline.arrSlabs.forEach((eachSlab) => {
+                        if (eachline.isLeftFull(slab)) {
+                            isLeftCollide = true;
+                        }
+                    });
+
+                });
+                return isLeftCollide;
+            }
+        }
+    }
+
+
+
+    /**
+     * returns true, if right position of the slab is full => there is a right collision
+     * @param {*} slab 
+     */
+    isRightSideCollision(slab) {
+        let isLeftCollide = false;
+
+        if (this.isSlabFalling) {
+            if (this.arrAllLines.length <= 0) {
+                return false;
+            } else {
+                this.arrAllLines.forEach((eachline) => {
+                    eachline.arrSlabs.forEach((eachSlab) => {
+                        if (eachline.isRightFull(slab)) {
+                            isLeftCollide = true;
+                        }
+                    });
+
+                });
+                return isLeftCollide;
+            }
+        }
+    }
+    /**
      *  Draw all slabs that reached the bottom of the canvas
      */
     drawAllLines() {
@@ -172,6 +232,7 @@ class SSGame {
     removeFilledLine() {
         let index = -1;
         if (this.arrAllLines.some((ele) => (ele.arrSlabs.length === this.canvas.width / 25))) {
+
             index = this.arrAllLines.findIndex((ele) => (ele.arrSlabs.length === this.canvas.width / 25));
             // console.log(`removeFilledLine() ->  line ${index} is filled `);
             this.arrAllLines.forEach((ele, idx) => {
@@ -199,4 +260,19 @@ class SSGame {
         this.simpleSlab.stopSlab();
         clearInterval(this.gameTimer);
     }
+
+    /**
+     * cheks whether the slab collided with Top of screen
+     */
+    checkTopCollision() {
+        let retVal = false;
+        this.arrAllLines.forEach((ele) => {
+            if (ele.isTopHit()) {
+                retVal = true;
+            }
+        });
+        // console.log(" checkTopCollision():  " + retVal);
+        return retVal;
+    }
+
 }

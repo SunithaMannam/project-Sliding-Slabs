@@ -43,10 +43,15 @@ class Slab {
         const img = new Image();
         img.src = 'images/redpattern_2.jpg';
         img.onload = () => {
+
             let pattern = this.gameCtx.createPattern(img, 'repeat');
             this.gameCtx.fillStyle = pattern;
+            this.gameCtx.shadowBlur = 2;
             this.gameCtx.fillRect(this.xPosition, this.yPosition, this.width, this.height);
-            this.gameCtx.strokeStyle = "#0000ff";
+            this.gameCtx.strokeStyle = "#701007";
+            this.gameCtx.lineWidth = 2;
+            this.gameCtx.strokeRect(this.xPosition, this.yPosition, this.width, this.height);
+            // this.gameCtx.stroke();
             // this.gameCtx.shadowBlur = 20;
             // this.gameCtx.lineWidth = 2;
             // this.gameCtx.strokeRect(this.xPosition, this.yPosition, this.width, this.height);
@@ -60,7 +65,8 @@ class Slab {
     clearSlab() {
         if (this.game.isSlabFalling) {
             // console.log(" clearSlab()  : " + this.xPosition + "  " + this.yPosition);
-            this.gameCtx.clearRect(this.xPosition, this.yPosition, this.width, this.height);
+            this.gameCtx.clearRect(this.xPosition - 1, this.yPosition - 1, this.width + 2, this.height + 2);
+            // this.gameCtx.clearRect(this.xPosition, this.yPosition, this.width, this.height);
         }
     }
 
@@ -123,14 +129,18 @@ class Slab {
         return false;
     }
 
+
+
     /**
      * chesks whether the slab reaches the bottom, but touches any other slabs
      */
     checkLineCollision() {
-        if (this.game.isLineCollision(this))
+        if (this.game.isLineCollision(this)) {
+            this.game.isSlabFalling = false;
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -145,20 +155,31 @@ class Slab {
                 this.clearSlab();
                 switch (key) {
                     case 37: // arrow left 
-                        if (this.xPosition >= this.width) {
+                        // alert(this.game.isLeftSideCollision(this));
+                        // console.log(`is slab colliding to left slab ${!this.game.isLeftSideCollision(this)} , slabx: ${this.xPosition} , slaxY: ${this.yPosition}`);
+                        // || this.game.isLeftSideCollision(this)
+                        if (this.xPosition >= this.width && !this.game.isLeftSideCollision(this)) {
                             this.xPosition -= this.width;
                         }
                         break;
 
                     case 39: // arrow right
-                        if (this.canvasWidth - this.xPosition > this.width) {
+                        if (this.canvasWidth - this.xPosition > this.width && !this.game.isRightSideCollision(this)) {
                             this.xPosition += this.width;
                         }
                         break;
                 }
                 // console.log(" moveslab() -- " + event.keyCode);
                 this.drawSlab(this.xPosition);
-
+                // if (this.checkLineCollision()) {
+                //     this.game.isCanvasTouched = false;
+                //     this.stopSlab();
+                // } else if (this.checkCanvasCollision()) {
+                //     this.game.isCanvasTouched = true;
+                //     this.stopSlab();
+                // } else {
+                //     this.drawSlab(this.xPosition);
+                // }
             }
         }
     }

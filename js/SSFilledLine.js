@@ -32,8 +32,9 @@ class SSFilledLine {
         } else { // if (this.topY) 
             this.arrSlabs.push(slab);
         }
+        // console.log(`addSlab() ${this.arrSlabs.length} `);
         // const idx = positionY % 25;
-        this.arrSlabPositions[slab.yPosition / 25] = 'Y';
+        // this.arrSlabPositions[slab.yPosition / 25] = 'Y';
     }
 
     /**
@@ -79,7 +80,7 @@ class SSFilledLine {
                 retVal = true;
             }
         });
-        console.log(" isslotFull():  " + retVal);
+        // console.log(" isslotFull():  " + retVal);
         return retVal;
     }
 
@@ -96,4 +97,51 @@ class SSFilledLine {
         });
     }
 
+    /**
+     * checks whether the left place of the slab ( in parameter) is filled or not,
+     * so that we can mvoe the slab to left
+     * returns 'true' when left position is filled, else return false
+     * @param {*} slab 
+     */
+    isLeftFull(slab) {
+        let retVal = false;
+        this.arrSlabs.forEach((ele) => {
+            if ((ele.xPosition + ele.width === slab.xPosition) && (ele.yPosition === slab.yPosition)) {
+                retVal = true;
+            }
+        });
+        return retVal;
+    }
+
+
+    /**
+     * checks whether the right place of the slab ( in parameter) is filled or not,
+     * so that we can mvoe the slab to right
+     * returns 'true' when right position is filled, else return false
+     * @param {*} slab 
+     */
+    isRightFull(slab) {
+        let retVal = false;
+        this.arrSlabs.forEach((ele) => {
+            if ((ele.xPosition === slab.xPosition + slab.width) && (ele.yPosition === slab.yPosition)) {
+                retVal = true;
+            }
+        });
+        return retVal;
+    }
+
+
+    /**
+     * cheks whether the slab collided with Top of screen
+     */
+    isTopHit() {
+        let retVal = false;
+        this.arrSlabs.forEach((ele) => {
+            if (ele.xPosition === 0) {
+                retVal = true;
+            }
+        });
+        // console.log(" checkTopCollision():  " + retVal);
+        return retVal;
+    }
 }
