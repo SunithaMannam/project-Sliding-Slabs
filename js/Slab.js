@@ -42,8 +42,8 @@ class Slab {
         // gradient.addColorStop(0.9, "red");
         // this.gameCtx.fillStyle = gradient;
         const img = new Image();
-        // img.src = "images/redpattern_2.jpg";
-        img.src = "images/smiley_1.png";
+        img.src = "images/redpattern_2.jpg";
+        // img.src = "images/smiley_1.png";
         img.onload = () => {
             // let pattern = this.gameCtx.createPattern(img, "repeat");
             //   this.gameCtx.fillStyle = pattern;
