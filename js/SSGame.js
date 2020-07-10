@@ -17,6 +17,7 @@ class SSGame {
         this.randXPos = undefined;
         this.gameTimer = undefined;
         this.score = 0;
+        this.colors = ["deepSkyBlue", "yellowGreen", "yellow", "wheat", "magenta", "beige"];
     }
 
     /**
@@ -78,10 +79,11 @@ class SSGame {
         // console.log(" start new slab ");
         // this.randXPos = (Math.floor(Math.random() * this.width));
         // this.randXPos = (this.randXPos < 25 ? 0 : Math.floor(this.randXPos / 25)) * 25;
-        this.randXPos = Math.floor(this.width / 2)
+        this.randXPos = Math.floor(this.width / 2);
+
         this.simpleSlab = new Slab();
         this.simpleSlab.setGame(this);
-        this.simpleSlab.draw(this.randXPos);
+        this.simpleSlab.draw(this.randXPos, this.colors[(Math.floor(Math.random() * this.colors.length))]);
     }
 
     /**
@@ -242,6 +244,7 @@ class SSGame {
     drawAllLines() {
         this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.arrAllLines.length > 0) {
+
             this.arrAllLines.forEach((eachLine, idx) => {
                 // console.log(` while drawing : ${idx}: top-y: ${eachLine.topY} , bottom-y: ${eachLine.bottomY}`);
                 eachLine.drawHorizontalLine(this.gameCtx);
@@ -290,7 +293,12 @@ class SSGame {
         img.onload = () => {
             this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.gameCtx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+            this.gameCtx.font = "30px Impact";
+            this.gameCtx.fillStyle = "#f44336";
+            this.gameCtx.fillText("Score: " + this.score, (this.canvas.width / 2) - 75, (this.canvas.height / 2) - 100);
+
         };
+
         const btn = document.querySelector(".btn-game");
         btn.classList.remove('stop');
         btn.classList.add('start');
