@@ -9,11 +9,6 @@ class SSFilledLine {
      */
     constructor() {
         this.height = 25;
-        this.arrSlabPositions = ['Y', 'N', 'N', 'N',
-            'N', 'Y', 'N', 'N',
-            'N', 'N', 'N', 'N',
-            'N', 'N', 'N', 'Y'
-        ];
         this.arrSlabs = [];
         this.topY = undefined;
         this.bottomY = undefined;
@@ -33,8 +28,6 @@ class SSFilledLine {
             this.arrSlabs.push(slab);
         }
         // console.log(`addSlab() ${this.arrSlabs.length} `);
-        // const idx = positionY % 25;
-        // this.arrSlabPositions[slab.yPosition / 25] = 'Y';
     }
 
     /**
@@ -45,14 +38,6 @@ class SSFilledLine {
         if (this.arrSlabs.length === Math.floor(width / 25)) {
             return true;
         }
-        // if (typeof this.arrSlabPositions === 'undefined') {
-        //     return false;
-        // } else if (this.arrSlabPositions.length === 0) {
-        //     return false;
-        // } else {
-
-        //     return returnValue;
-        // }
     }
 
     /**
@@ -124,6 +109,22 @@ class SSFilledLine {
         let retVal = false;
         this.arrSlabs.forEach((ele) => {
             if ((ele.xPosition === slab.xPosition + slab.width) && (ele.yPosition === slab.yPosition)) {
+                retVal = true;
+            }
+        });
+        return retVal;
+    }
+
+    /**
+     * checks whether the bottom place of the slab ( in parameter) is filled or not,
+     * so that we can mvoe the slab to bottom
+     * returns 'true' when bottom position is filled, else return false
+     * @param {*} slab 
+     */
+    isBottomFull(slab) {
+        let retVal = false;
+        this.arrSlabs.forEach((ele) => {
+            if ((ele.yPosition - slab.height === slab.yPosition) && (ele.xPosition === slab.xPosition)) {
                 retVal = true;
             }
         });

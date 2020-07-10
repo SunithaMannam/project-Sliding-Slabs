@@ -7,7 +7,7 @@ class Slab {
      */
     constructor() {
         this.xPosition = 0;
-        this.yPosition = 0;
+        this.yPosition = -25;
         this.width = 25;
         this.height = 25;
         this.movetimer = undefined;
@@ -56,7 +56,7 @@ class Slab {
             // this.gameCtx.lineWidth = 2;
             // this.gameCtx.strokeRect(this.xPosition, this.yPosition, this.width, this.height);
         };
-        // console.log(` inside drawSlab() --- x:  ${this.xPosition}   y: ${this.yPosition} `);
+        console.log(` inside drawSlab() --- x:  ${this.xPosition}   y: ${this.yPosition} `);
     }
 
     /**
@@ -150,7 +150,7 @@ class Slab {
         document.onkeydown = (event) => {
             const key = event.keyCode;
             /*  37 : arrow left ;  39 : arrow right ;   */
-            const possibleKeyStrokes = [37, 39];
+            const possibleKeyStrokes = [37, 39, 40];
             if (possibleKeyStrokes.includes(key) && this.game.isSlabFalling) {
                 this.clearSlab();
                 switch (key) {
@@ -166,6 +166,12 @@ class Slab {
                     case 39: // arrow right
                         if (this.canvasWidth - this.xPosition > this.width && !this.game.isRightSideCollision(this)) {
                             this.xPosition += this.width;
+                        }
+                        break;
+
+                    case 40:
+                        if (this.yPosition + this.height < this.canvasHeight && !this.game.isBottomSideCollision(this)) {
+                            this.yPosition += this.height;
                         }
                         break;
                 }

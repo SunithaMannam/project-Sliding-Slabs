@@ -16,6 +16,7 @@ class SSGame {
         this.isSlabFalling = undefined;
         this.randXPos = undefined;
         this.gameTimer = undefined;
+        this.score = 0;
     }
 
     /**
@@ -62,7 +63,8 @@ class SSGame {
                 this.simpleSlab.moveSlab();
             }
             if (this.checkTopCollision()) {
-                // console.log(`collised with top game over !! ${this.arrAllLines.length} `);
+                console.log(`collised with top game over !! ${this.arrAllLines.length} `);
+                this.stopGame();
             }
         }, 1000 / 1);
         // console.log(" inside SSGame-> start()"); // + this.simpleSlab.xPosition + " " + this.simpleSlab.yPosition);
@@ -73,9 +75,10 @@ class SSGame {
      * Create a new slab and draw,mone onthe canvas [for falling slab]
      * */
     startNewSlab() {
-        console.log(" start new slab ");
-        this.randXPos = (Math.floor(Math.random() * this.width));
-        this.randXPos = (this.randXPos < 25 ? 0 : Math.floor(this.randXPos / 25)) * 25;
+        // console.log(" start new slab ");
+        // this.randXPos = (Math.floor(Math.random() * this.width));
+        // this.randXPos = (this.randXPos < 25 ? 0 : Math.floor(this.randXPos / 25)) * 25;
+        this.randXPos = Math.floor(this.width / 2)
         this.simpleSlab = new Slab();
         this.simpleSlab.setGame(this);
         this.simpleSlab.draw(this.randXPos);
@@ -128,13 +131,6 @@ class SSGame {
                 if (element.topY === slab.yPosition) {
                     retElement = element;
                 }
-                // console.log("getHorizontalLine() --  " + element.topY + " slab-Y: " + slab.yPosition + "touch type: " + this.isCanvasTouched);
-                // if (!this.isCanvasTouched && element.topY === slab.yPosition + slab.height) {
-                //     retElement = element;
-                // }
-                // if (this.isCanvasTouched && element.topY === slab.yPosition) {
-                //     retElement = element;
-                // }
             });
         }
         return retElement;
@@ -212,6 +208,34 @@ class SSGame {
             }
         }
     }
+
+
+
+    /**
+     * returns true, if bottom position of the slab is full => there is a bottom collision
+     * @param {*} slab 
+     */
+    isBottomSideCollision(slab) {
+        let isBottomCollide = false;
+
+        if (this.isSlabFalling) {
+            if (this.arrAllLines.length <= 0) {
+                return false;
+            } else {
+                this.arrAllLines.forEach((eachline) => {
+                    eachline.arrSlabs.forEach((eachSlab) => {
+                        if (eachline.isBottomFull(slab)) {
+                            isBottomCollide = true;
+                        }
+                    });
+
+                });
+                return isBottomCollide;
+            }
+        }
+
+
+    }
     /**
      *  Draw all slabs that reached the bottom of the canvas
      */
@@ -246,6 +270,7 @@ class SSGame {
                 // console.log(`After change: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
             });
             this.arrAllLines = this.arrAllLines.filter((ele) => ((ele.arrSlabs.length != this.canvas.width / 25)));
+            this.score += 50;
             // console.log(" --- after remoing row: ");
             this.arrAllLines.forEach((ele, idx) => {
                 // console.log(`After removing: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
@@ -253,13 +278,25 @@ class SSGame {
         }
     }
 
+
     /**
      *  to stop the game
      */
     stopGame() {
         this.simpleSlab.stopSlab();
         clearInterval(this.gameTimer);
+        let img = new Image();
+        img.src = 'images/gameover_1.jpg';
+        img.onload = () => {
+            this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.gameCtx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+        };
+        const btn = document.querySelector(".btn-game");
+        btn.classList.remove('stop');
+        btn.classList.add('start');
+        btn.innerText = 'START GAME';
     }
+
 
     /**
      * cheks whether the slab collided with Top of screen
@@ -267,7 +304,7 @@ class SSGame {
     checkTopCollision() {
         let retVal = false;
         this.arrAllLines.forEach((ele) => {
-            if (ele.isTopHit()) {
+            if (ele.topY === 0) {
                 retVal = true;
             }
         });
