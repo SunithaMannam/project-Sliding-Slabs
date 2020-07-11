@@ -25,7 +25,7 @@ window.onload = function () {
         screen.style.display = 'inline';
         game = new SSGame();
         game.init();
-        console.log("start button clicked " + screen.getAttribute("display"));
+        // console.log("start button clicked " + screen.getAttribute("display"));
     }
 
     /**
@@ -41,6 +41,6 @@ window.onload = function () {
 /**
  * 
  *  1. screen  flickering
-    2. the block before the collisonis detected it is moving and joining the next block 
-    3. the block is not drawn from line 0. 
+    2.  sounds for moving 
+    3.  background image for the body 
  */
