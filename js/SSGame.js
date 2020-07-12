@@ -16,6 +16,7 @@ class SSGame {
         this.isSlabFalling = undefined;
         this.randXPos = undefined;
         this.gameTimer = undefined;
+        this.drawTimer = undefined;
         this.score = 0;
         this.colors = ["deepSkyBlue", "yellowGreen", "yellow", "wheat", "magenta", "beige"];
     }
@@ -34,6 +35,8 @@ class SSGame {
         this.isCanvasTouched = true;
         this.arrAllLines = [];
         this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.audioElement = new Audio('sound/line-fill.mp3');
+
         this.start();
     }
 
@@ -51,12 +54,21 @@ class SSGame {
         this.gameTimer = setInterval(() => {
             // 1. Draw all the lines on canvas
             if (this.arrAllLines.length > 0) {
-                this.arrAllLines.forEach((eachLine) => {
-                    // 3. Check for lines full and remove the fully formed lines                    
-                    this.removeFilledLine();
-                    // this.gameCtx.restore();                    
-                    this.drawAllLines();
-                });
+                // this.arrAllLines.forEach((eachLine) => {
+                // 3. Check for lines full and remove the fully formed lines                    
+                this.setFilledLine();
+                this.drawTimer = setInterval(() => {
+                    this.drawFilledLines();
+                    this.drawPartialLines();
+                }, 1000 / 100); // 100
+                this.drawStopTimer = setTimeout(() => {
+                    clearInterval(this.drawTimer);
+                    this.audioElement.pause();
+                    this.gameCtx.shadowColor = "transparent";
+                    this.changePositions();
+                    this.clearCanvas();
+                    this.drawPartialLines();
+                }, 1000 / 5);
             }
             //2. Trigger a new fallling slab,if previous slab hit the bottom
             if (!this.isSlabFalling) {
@@ -72,6 +84,10 @@ class SSGame {
     }
 
 
+    clearCanvas() {
+        this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     /**
      * Create a new slab and draw,mone onthe canvas [for falling slab]
      * */
@@ -80,7 +96,6 @@ class SSGame {
         // this.randXPos = (Math.floor(Math.random() * this.width));
         // this.randXPos = (this.randXPos < 25 ? 0 : Math.floor(this.randXPos / 25)) * 25;
         this.randXPos = Math.floor(this.width / 2);
-
         this.simpleSlab = new Slab();
         this.simpleSlab.setGame(this);
         this.simpleSlab.draw(this.randXPos, this.colors[(Math.floor(Math.random() * this.colors.length))]);
@@ -138,6 +153,8 @@ class SSGame {
         return retElement;
     }
 
+
+
     /**
      *  To chek whether falling slab is colliding with any of horizontal lines (but not canvas) 
      * */
@@ -160,6 +177,7 @@ class SSGame {
         }
         return false;
     }
+
 
     /**
      * returns true, if left position of the slab is full => there is a left collision
@@ -235,28 +253,101 @@ class SSGame {
                 return isBottomCollide;
             }
         }
-
-
     }
+
+    // ========  working properly ========
+    // drawFilledLines() {
+    //     console.log(" draw filled lines called ");
+    //     if (this.arrAllLines.length > 0) {
+    //         let audioElement = new Audio('sound/line-fill.mp3');
+    //         const intervalId = setInterval(() => {
+
+    //             this.arrAllLines.forEach((eachLine, idx) => {
+
+    //                 if (eachLine.isLineFull) {
+    //                     console.log(` while drawing : ${idx}: top-y: ${eachLine.topY} , bottom-y: ${eachLine.bottomY}`);
+    //                     this.gameCtx.fillStyle = "white";
+    //                     this.gameCtx.strokeStyle = "#701007";
+    //                     this.gameCtx.lineWidth = 3;
+    //                     this.gameCtx.shadowColor = "black";
+    //                     this.gameCtx.shadowBlur = 20;
+
+    //                     this.gameCtx.fillRect(
+    //                         0, eachLine.topY,
+    //                         this.canvas.width,
+    //                         this.height
+    //                     );
+    //                     this.gameCtx.strokeRect(
+    //                         0, eachLine.topY,
+    //                         this.canvas.width,
+    //                         this.height);
+
+    //                     audioElement.volume = 0.05;
+    //                     audioElement.play();
+
+    //                 } else {
+    //                     // this.drawAllLines();
+    //                     this.gameCtx.shadowColor = "transparent";
+    //                     eachLine.drawHorizontalLine(this.gameCtx);
+    //                 }
+    //                 // audioElement.pause();
+    //                 // this.gameCtx.shadowColor = "transparent";
+    //             });
+    //         }, 1000 / 100);
+
+
+
+
+    //         setTimeout(() => {
+    //             clearInterval(intervalId);
+    //             audioElement.pause();
+    //             this.gameCtx.shadowColor = "transparent";
+    //             this.changePositions();
+    //             this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    //             this.drawAllLines();
+    //         }, 1000 / 10);
+
+    //     }
+    // }
+
     /**
      *  Draw all slabs that reached the bottom of the canvas
      */
-    drawAllLines() {
-        this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    drawPartialLines() {
+        // this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        console.log("drawPartialLines: " + this.arrAllLines.length);
         if (this.arrAllLines.length > 0) {
-
             this.arrAllLines.forEach((eachLine, idx) => {
-                // console.log(` while drawing : ${idx}: top-y: ${eachLine.topY} , bottom-y: ${eachLine.bottomY}`);
-                eachLine.drawHorizontalLine(this.gameCtx);
+                if (!eachLine.isLineFull) {
+                    console.log(` while drawing : ${idx}: top-y: ${eachLine.topY} , bottom-y: ${eachLine.bottomY}`);
+                    eachLine.drawHorizontalLine(this.gameCtx);
+                }
             });
         }
     }
 
+    drawFilledLines() {
+        console.log("drawFilledLines: " + this.arrAllLines.length);
+        if (this.arrAllLines.length > 0) {
+            this.arrAllLines.forEach((eachLine, idx) => {
+                if (eachLine.isLineFull) {
+                    this.gameCtx.fillStyle = "white";
+                    this.gameCtx.strokeStyle = "#701007";
+                    this.gameCtx.lineWidth = 3;
+                    this.gameCtx.shadowColor = "black";
+                    this.gameCtx.shadowBlur = 20;
 
-    /**
-     * Check for the filled horizontal lines and removes them 
-     */
-    removeFilledLine() {
+                    this.gameCtx.fillRect(0, eachLine.topY, this.canvas.width, this.height);
+                    this.gameCtx.strokeRect(0, eachLine.topY, this.canvas.width, this.height);
+
+                    this.audioElement.volume = 0.05;
+                    this.audioElement.play();
+                }
+            });
+        }
+    }
+
+    changePositions() {
         let index = -1;
         if (this.arrAllLines.some((ele) => (ele.arrSlabs.length === this.canvas.width / 25))) {
 
@@ -265,19 +356,37 @@ class SSGame {
             this.arrAllLines.forEach((ele, idx) => {
                 // console.log(`Before change: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
                 // if (index != idx) {
-                if (index <= idx) {
+                if (index < idx) {
                     ele.bottomY += 25;
                     ele.topY += 25;
                     ele.changeSlabPosition(ele.topY);
                 }
                 // console.log(`After change: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
             });
+            // remove filled lines
             this.arrAllLines = this.arrAllLines.filter((ele) => ((ele.arrSlabs.length != this.canvas.width / 25)));
-            this.score += 50;
-            // console.log(" --- after remoing row: ");
-            this.arrAllLines.forEach((ele, idx) => {
-                // console.log(`After removing: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
+        }
+    }
+
+    /**
+     * Check for the filled horizontal lines and removes them 
+     */
+    setFilledLine() {
+        let index = -1;
+        if (this.arrAllLines.some((ele) => (ele.arrSlabs.length === this.canvas.width / 25))) {
+
+            this.arrAllLines = this.arrAllLines.map((ele, idx) => {
+                if (ele.arrSlabs.length === this.canvas.width / 25) {
+                    ele.isLineFull = true;
+                }
+                console.log(`After set to treu: ${idx}: top-y: ${ele.topY} , bottom-y: ${ele.bottomY}`);
+                return ele;
             });
+
+            this.score += 50;
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -288,10 +397,18 @@ class SSGame {
     stopGame() {
         this.simpleSlab.stopSlab();
         clearInterval(this.gameTimer);
+        clearInterval(this.drawTimer);
+        clearTimeout(this.drawStopTimer);
+        this.audioElement.pause();
+        this.gameCtx.shadowColor = "transparent";
+        this.arrAllLines = [];
+
         let img = new Image();
         img.src = 'images/gameover_1.jpg';
         img.onload = () => {
-            this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            var audioElement = new Audio('sound/game-end.mp3');
+            audioElement.volume = 0.05;
+            audioElement.play();
             this.gameCtx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
             this.gameCtx.font = "30px Impact";
             this.gameCtx.fillStyle = "#f44336";

@@ -84,13 +84,6 @@ class Slab {
                 this.width + 4,
                 this.height + 4
             );
-            //   this.gameCtx.clearRect(
-            //     this.xPosition - 1,
-            //     this.yPosition - 1,
-            //     this.width + 2,
-            //     this.height + 2
-            //   );
-            // this.gameCtx.clearRect(this.xPosition, this.yPosition, this.width, this.height);
         }
     }
 
@@ -122,7 +115,7 @@ class Slab {
             } else {
                 this.yPosition += 25;
             }
-        }, 1000 / 4);
+        }, 1000 / 8);
     }
 
     /**
@@ -164,6 +157,11 @@ class Slab {
         }
     }
 
+    playSlabMove() {
+        var audioElement = new Audio('sound/slab-move.mp3');
+        audioElement.volume = 0.05;
+        audioElement.play();
+    }
     /**
      * For slab moving roght or left
      */
@@ -184,6 +182,7 @@ class Slab {
                             !this.game.isLeftSideCollision(this)
                         ) {
                             this.xPosition -= this.width;
+                            this.playSlabMove();
                         }
                         break;
 
@@ -193,6 +192,7 @@ class Slab {
                             !this.game.isRightSideCollision(this)
                         ) {
                             this.xPosition += this.width;
+                            this.playSlabMove();
                         }
                         break;
 
@@ -202,6 +202,7 @@ class Slab {
                             !this.game.isBottomSideCollision(this)
                         ) {
                             this.yPosition += this.height;
+                            this.playSlabMove();
                         }
                         break;
                 }

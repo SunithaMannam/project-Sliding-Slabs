@@ -12,6 +12,7 @@ class SSFilledLine {
         this.arrSlabs = [];
         this.topY = undefined;
         this.bottomY = undefined;
+        this.isLineFull = undefined;
     }
 
 
@@ -27,6 +28,7 @@ class SSFilledLine {
         } else { // if (this.topY) 
             this.arrSlabs.push(slab);
         }
+        this.isLineFull = false;
         // console.log(`addSlab() ${this.arrSlabs.length} `);
     }
 
@@ -76,10 +78,13 @@ class SSFilledLine {
     drawHorizontalLine(context) {
         // console.log(" drawHorizontalLine() called ");
         this.context = context;
-        this.arrSlabs.forEach((eachSlab) => {
-            // eachSlab.drawSlab(eachSlab.xPosition);
-            eachSlab.drawSlab();
-        });
+        if (!this.isLineFull) {
+
+            this.arrSlabs.forEach((eachSlab) => {
+                // eachSlab.drawSlab(eachSlab.xPosition);              
+                eachSlab.drawSlab();
+            });
+        }
     }
 
     /**
