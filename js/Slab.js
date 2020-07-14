@@ -115,7 +115,7 @@ class Slab {
             } else {
                 this.yPosition += 25;
             }
-        }, 1000 / 8);
+        }, 1000 / 15);
     }
 
     /**
