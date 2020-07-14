@@ -23,6 +23,8 @@ window.onload = function () {
         btn.innerText = 'STOP GAME';
         const screen = document.querySelector("#ss-canvas");
         screen.style.display = 'inline';
+        const score = document.querySelector("#score-board");
+        score.style.display = 'contents';
         game = new SSGame();
         game.init();
         // console.log("start button clicked " + screen.getAttribute("display"));
@@ -33,7 +35,9 @@ window.onload = function () {
      *  */
     function stop() {
         console.log(" stop button clicked ");
+        // game.gameOverScreen();
         game.stopGame();
+
     }
 
 };

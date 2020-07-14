@@ -36,8 +36,10 @@ class SSGame {
         this.arrAllLines = [];
         this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.audioElement = new Audio('sound/line-fill.mp3');
-
+        this.clearScore();
+        this.showScore();
         this.start();
+
     }
 
     /**
@@ -196,7 +198,6 @@ class SSGame {
                             isLeftCollide = true;
                         }
                     });
-
                 });
                 return isLeftCollide;
             }
@@ -255,60 +256,7 @@ class SSGame {
         }
     }
 
-    // ========  working properly ========
-    // drawFilledLines() {
-    //     console.log(" draw filled lines called ");
-    //     if (this.arrAllLines.length > 0) {
-    //         let audioElement = new Audio('sound/line-fill.mp3');
-    //         const intervalId = setInterval(() => {
 
-    //             this.arrAllLines.forEach((eachLine, idx) => {
-
-    //                 if (eachLine.isLineFull) {
-    //                     console.log(` while drawing : ${idx}: top-y: ${eachLine.topY} , bottom-y: ${eachLine.bottomY}`);
-    //                     this.gameCtx.fillStyle = "white";
-    //                     this.gameCtx.strokeStyle = "#701007";
-    //                     this.gameCtx.lineWidth = 3;
-    //                     this.gameCtx.shadowColor = "black";
-    //                     this.gameCtx.shadowBlur = 20;
-
-    //                     this.gameCtx.fillRect(
-    //                         0, eachLine.topY,
-    //                         this.canvas.width,
-    //                         this.height
-    //                     );
-    //                     this.gameCtx.strokeRect(
-    //                         0, eachLine.topY,
-    //                         this.canvas.width,
-    //                         this.height);
-
-    //                     audioElement.volume = 0.05;
-    //                     audioElement.play();
-
-    //                 } else {
-    //                     // this.drawAllLines();
-    //                     this.gameCtx.shadowColor = "transparent";
-    //                     eachLine.drawHorizontalLine(this.gameCtx);
-    //                 }
-    //                 // audioElement.pause();
-    //                 // this.gameCtx.shadowColor = "transparent";
-    //             });
-    //         }, 1000 / 100);
-
-
-
-
-    //         setTimeout(() => {
-    //             clearInterval(intervalId);
-    //             audioElement.pause();
-    //             this.gameCtx.shadowColor = "transparent";
-    //             this.changePositions();
-    //             this.gameCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    //             this.drawAllLines();
-    //         }, 1000 / 10);
-
-    //     }
-    // }
 
     /**
      *  Draw all slabs that reached the bottom of the canvas
@@ -384,12 +332,27 @@ class SSGame {
             });
 
             this.score += 50;
+            this.updateScore();
             return true;
         } else {
             return false;
         }
     }
 
+    updateScore() {
+        let scoreEle = document.querySelector("#score-board p");
+        scoreEle.innerText = "SCORE: " + this.score;
+    }
+
+    clearScore() {
+        let scoreEle = document.querySelector("#score-board p");
+        scoreEle.innerText = "";
+    }
+
+    showScore() {
+        let scoreEle = document.querySelector("#score-board p");
+        scoreEle.innerText = "SCORE: " + this.score;
+    }
 
     /**
      *  to stop the game
@@ -412,8 +375,7 @@ class SSGame {
             this.gameCtx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
             this.gameCtx.font = "30px Impact";
             this.gameCtx.fillStyle = "#f44336";
-            this.gameCtx.fillText("Score: " + this.score, (this.canvas.width / 2) - 75, (this.canvas.height / 2) - 100);
-
+            this.gameCtx.fillText("Score: " + this.score, (this.canvas.width / 2) - 60, (this.canvas.height / 2) - 100);
         };
 
         const btn = document.querySelector(".btn-game");
@@ -436,5 +398,6 @@ class SSGame {
         // console.log(" checkTopCollision():  " + retVal);
         return retVal;
     }
+
 
 }

@@ -39,5 +39,5 @@ It is a block matching game (influenced by Tetris game), where small square slab
  # Links
  <h4>Trello</h4> <a href="https://trello.com/b/ovt53z5I" alt="">https://trello.com/b/ovt53z5I</a>
  <h4>Git</h4> <p>URls for the project repo and deploy
-<a href="https://github.com/SunithaMannam/IronHack-Project-1-SlidingSlabs">Link Repo</a>
-<a href="https://github.com/SunithaMannam/IronHack-Project-1-SlidingSlabs" >Link Deploy</a></p>
+<a href="https://github.com/SunithaMannam/project-Sliding-Slabs">Link Repo</a> 
+<a href="https://sunithamannam.github.io/project-Sliding-Slabs/" >Link Deploy</a></p>
